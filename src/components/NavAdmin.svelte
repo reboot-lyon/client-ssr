@@ -25,7 +25,7 @@
 	};
 
 	const logout = async() => {
-		const res = await delProxy('/auth/logout');
+		const res = await delProxy('/auth');
 		if (res.user !== undefined) {
 			$session.user = res.user;
 			await goto('/');

@@ -1,18 +1,17 @@
 <script>
-	import { onMount } from 'svelte';
-	import { scale } from 'svelte/transition';
-	import { expoInOut } from 'svelte/easing';
+    import { onMount } from 'svelte';
+    import { expoOut } from 'svelte/easing';
+    import { fly, scale } from 'svelte/transition';
 
-	export let hide = true;
-	export let easing = expoInOut;
+    let active = false;
 
-	onMount(() => {
-		hide = false;
-	});
+    onMount(() => {
+        active = true;
+    });
 </script>
 
-{#if !hide}
-	<div in:scale="{{ y: -200, duration: 800, easing }}">
-		<slot />
-	</div>
+{#if active}
+<div in:fly="{{ y: -800, duration: 1200, easing: expoOut }}">
+    <slot />
+</div>
 {/if}

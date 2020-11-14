@@ -14,37 +14,17 @@
 
 	const { session } = stores();
 
-	let forgotPasswd = false;
+	const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;	
 
 	const passwd = {
 		show: false,
 		value: undefined
 	};
 	const email = {
-		error: true,
+		show: false,
 		value: undefined,
-		rules: [
-			(v) => !!v || 'Required',
-			(v) => v.length <= 25 || 'Max 25 characters',
-			(v) => {
-				const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-				return pattern.test(v) || 'Invalid e-mail.';
-			},
-		],
-		hint: ''
-	};
-
-	const forgotEmail = {
-		error: true,
-		value: undefined,
-		rules: [
-			(v) => !!v || 'Required',
-			(v) => v.length <= 25 || 'Max 25 characters',
-			(v) => {
-				const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-				return pattern.test(v) || 'Invalid e-mail.';
-			},
-		],
+		sent: false,
+		error: false,
 		hint: ''
 	};
 
@@ -53,33 +33,58 @@
 		disabled: false
 	};
 
-	const checkAuth = async() => {
-		if (!email.error && email.value !== '' && passwd.value !== '') {
-			card.loading = true;
-			card.disabled = true;
-			const res = await postProxy('/auth/login', { email: email.value, passwd: passwd.value });
+	const sendAuth = async() => {
+		if (pattern.test(email.value) && passwd.value !== '') {
+			toggleCard();
+			const res = await postProxy('/auth', { email: email.value, passwd: passwd.value });
 			if (res.user) {
 				$session.user = res.user;
 				await goto('/home');
 			} else {
 				passwd.value = '';
+				email.error = true;
 				email.hint = 'Invalid Email or Password';
-				card.loading = false;
-				card.disabled = false;
+				toggleCard();
 			}
+		} else {
+			email.error = true;
+			email.hint = 'Invalid Email';
 		}
 	};
 
 	const sendForgotMail = async() => {
-		console.log('sent');
+		if (pattern.test(email.value)) {
+			email.error = false;
+			email.hint = '';
+			toggleCard();
+			const res = await postProxy('/forgot', { email: email.value });
+			if (res.success) {
+				email.sent = true;
+			} else {
+				email.error = true;
+				email.hint = 'Invalid Email';
+			}
+			toggleCard();
+		} else {
+			email.error = true;
+			email.hint = 'Invalid Email';
+		}
 	}
 
 	const toggleForgotPasswd = () => {
-		forgotPasswd = !forgotPasswd;
+		email.show = !email.show;
 		email.value = '';
-		forgotEmail.value = '';
+		email.sent = false;
+		email.error = false;
+		email.hint = '';
+		email.value = '';
 		passwd.value = '';
 	};
+
+	const toggleCard = () => {
+		card.loading = !card.loading;
+		card.disabled = !card.disabled;
+	}
 </script>
 
 <div class="login">
@@ -87,16 +92,16 @@
 		<CardTitle class="d-flex justify-center">
 			<img src="media/reboot-undercover.png" style="max-width: 300px;" alt="background" />
 		</CardTitle>
-		{#if !forgotPasswd}
+		{#if !email.show}
 		<CardText>
 			<div in:fly="{{ y: -200, duration: 800, esaing: expoInOut }}">
-				<TextField filled clearable rules="{email.rules}" bind:hint="{email.hint}" bind:error="{email.error}" bind:value="{email.value}">
+				<TextField filled clearable bind:error="{email.error}" bind:hint="{email.hint}" validateOnBlur="{true}" bind:value="{email.value}">
 					Email
 					<div slot="prepend">
 						<Icon path="{ mdiEmail }" />
 					</div>
 				</TextField>
-				<TextField filled type="{passwd.show ? 'text' : 'password'}" on:change="{checkAuth}" bind:value="{passwd.value}">
+				<TextField filled type="{passwd.show ? 'text' : 'password'}" bind:value="{passwd.value}">
 					Password
 					<div slot="append" on:click="{() => { passwd.show = !passwd.show; }}">
 						<Icon path="{ passwd.show ? mdiEyeOff : mdiEye }"></Icon>
@@ -106,12 +111,12 @@
 					</div>
 				</TextField>
 				<div class="d-flex justify-center">
-					<a on:click="{toggleForgotPasswd}" href="#/">Forgot password</a>
+					<p class="forgot-password" on:click="{toggleForgotPasswd}">Forgot password</p>
 				</div>
 			</div>
 		</CardText>
 		<CardActions class="d-flex justify-center">
-			<Button block depressed size="x-large" on:click="{checkAuth}">
+			<Button block depressed size="x-large" on:click="{sendAuth}">
 				<Icon class="mr-4" path="{ mdiLoginVariant }" />
 				Login
 			</Button>
@@ -119,14 +124,14 @@
 		{:else}
 		<CardText>
 			<div in:fly="{{ y: -200, duration: 800, esaing: expoInOut }}">
-				<TextField filled clearable rules="{forgotEmail.rules}" bind:hint="{forgotEmail.hint}" bind:error="{forgotEmail.error}" bind:value="{forgotEmail.value}">
+				<TextField filled clearable bind:error="{email.error}" bind:hint="{email.hint}" bind:value="{email.value}">
 					Email
 					<div slot="prepend">
 						<Icon path="{ mdiEmail }" />
 					</div>
 				</TextField>
 				<div class="d-flex justify-center">
-					<a on:click="{toggleForgotPasswd}" href="#/">Back login</a>
+					<p class="forgot-password" on:click="{toggleForgotPasswd}" href="#/">Sign in</p>
 				</div>
 			</div>
 		</CardText>
@@ -141,6 +146,12 @@
 </div>
 
 <style>
+
+	p.forgot-password {
+		color: cornflowerblue;
+		cursor: pointer;
+		text-decoration: underline;
+	}
 
 	.login {
 		min-width: 300px;

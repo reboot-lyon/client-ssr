@@ -6,20 +6,12 @@
 </script>
 
 <script>
-	import Login from '../components/Login.svelte';
-	import Showcase from '../components/Showcase.svelte';
 
 	//export let segment;
 </script>
 
 <svelte:head>
-	<title>Reboot • Sign-in</title>
+	<title>Reboot • Yugioh</title>
 </svelte:head>
 
-<div class="d-flex justify-center" style="height: 100vh">
-	<div class="align-self-center">
-		<Showcase>
-			<Login />
-		</Showcase>
-	</div>
-</div>
+StartUp

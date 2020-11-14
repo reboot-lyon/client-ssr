@@ -3,24 +3,13 @@
 	import { fly } from 'svelte/transition';
 	import { expoOut } from 'svelte/easing';
 	import { goto, stores } from '@sapper/app';
-	import Badge from 'svelte-materialify/src/components/Badge/Badge.svelte';
-	import Container from 'svelte-materialify/src/components/Grid/Container.svelte';
-	import Row from 'svelte-materialify/src/components/Grid/Row.svelte';
-	import Col from 'svelte-materialify/src/components/Grid/Col.svelte';
-	import List from 'svelte-materialify/src/components/List/List.svelte';
-	import ListItem from 'svelte-materialify/src/components/List/ListItem.svelte';
-	import Avatar from 'svelte-materialify/src/components/Avatar/Avatar.svelte';
-	import Tabs from 'svelte-materialify/src/components/Tabs/Tabs.svelte';
-	import Tab from 'svelte-materialify/src/components/Tabs/Tab.svelte';
-	import Divider from 'svelte-materialify/src/components/Divider/Divider.svelte';
-	import Icon from 'svelte-materialify/src/components/Icon/Icon.svelte';
-	import { mdiHome, mdiTrophy, mdiAccount, mdiLogout, mdiCalendarText } from '@mdi/js';
+	import { Avatar, Badge, Button, Divider, Icon, TextField } from 'svelte-materialify/src';
+	import { mdiHome, mdiTrophy, mdiAccount, mdiLogout, mdiCalendarText, mdiMapCheck, mdiManjaro, mdiSearchWeb, mdiMagnify, mdiCalendarBlankOutline, mdiTrophyVariant, mdiTournament, mdiArrowCollapse, mdiArrowCollapseDown, mdiChevronDown } from '@mdi/js';
 
 	export let segment;
 	export let user = false;
 
 	const { session } = stores();
-
 
 	/*const logout = async() => {
 		const res = await delProxy('/auth/logout');
@@ -29,52 +18,103 @@
 			await goto('/');
 		}
 	};*/
-	let hide = true;
+	let value;
+	$: console.log(value);
+
+	let active = false;
 
 	onMount(() => {
-		hide = false;
+		active = true;
+		console.log('segment', segment);
 	});
 </script>
 
-{#if !hide}
+{#if active && segment !== 'auth'}
 <nav class="navbar-user" in:fly="{{ y: -200, duration: 800, easing: expoOut }}">
-	<div class="icon" on:click="{() => {goto('/')}}">
-		<img src="media/reboot-undercover.png" style="max-width: 60px;" alt="logo" />
+	<div class="cover ml-12" on:click="{async () => {await goto('/')}}">
+		<img src="media/reboot-undercover2.png" style="max-height: 60px;" alt="logo" />
 	</div>
-	<div style="flex-grow:1" />
-	<div right class="pl-12 pr-12">
+	<div class="d-flex flex-row align-stretch">
+		<Button class="pl-8 pr-8" style="width: 200px; height: 60px;" depressed tile on:click="{async() => {await goto('/events')}}">
+			<div class="d-flex flex-column justify-center">
+				<Icon path="{mdiCalendarBlankOutline}" />
+				<p class="title">Events</p>
+			</div>
+		</Button>
+		<Button class="pl-8 pr-8" style="width: 200px; height: 60px;" depressed tile on:click="{async() => {await goto('/leaderboards')}}">
+			<div class="d-flex flex-column justify-center">
+				<Icon path="{mdiTrophyVariant}" />
+				<p class="title">Leaderboard</p>
+			</div>
+		</Button>
+		<Button class="pl-8 pr-8" style="width: 200px; height: 60px;" depressed tile on:click="{async() => {await goto('/tournaments')}}">
+			<div class="d-flex flex-column justify-center">
+				<Icon path="{mdiTournament}" />
+				<p class="title">Tournament</p>
+			</div>
+		</Button>
+	</div>
+	<div style="flex-grow:1; background: #272727;" />
+	<div style="flex-grow:1; max-width: 400;">
+		<div class="d-flex align-center">
+			<TextField class="navbar-user-search primary-text" flat placeholder="Search">
+				<div slot="append">
+					<Icon path="{mdiMagnify}" />
+				</div>
+			</TextField>
+		</div>
+	</div>
 	{#if !user}
-		<div right>hello</div>
-	{:else}
-		<Badge class="primary-color grey-text" value="{2}" offsetX="{16}" offsetY="{16}">
-			<Avatar size="{40}"><img src="//picsum.photos/50" alt="profile" /></Avatar>
-		</Badge>
-	{/if}
+	<div class="d-flex flex-row align-stretch">
+		<Button class="pl-8 pr-8" style="max-width: 120px; height: 60px;" depressed tile on:click="{async() => {await goto('/auth/sign')}}">
+			Sign in
+		</Button>
+		<Button class="pl-8 pr-8" style="max-width: 120px; height: 60px;" depressed tile on:click="{async() => {await goto('/auth/register')}}">
+			Register
+		</Button>
 	</div>
+	{:else}
+	<div class="d-flex flex-row align-stretch">
+		<Button class="pl-8" style="width: 120px; height: 60px;" depressed tile on:click="{async() => {value = true}}">
+			<div class="d-flex flex-row justify-center align-stretch">
+				<Badge class="primary-color white-text" dot bottom offsetX="{10}" offsetY="{10}">
+					<Avatar size="{45}"><img src="//picsum.photos/50" alt="profile" /></Avatar>
+				</Badge>
+				<Icon path="{mdiChevronDown}" />
+			</div>
+		</Button>
+	</div>
+	{/if}
 </nav>
 {/if}
 
 <style type="text/scss">
 	@import 'svelte-materialify/src/styles/tools/colors';
 
+	:global(.navbar-user-tab) {
+		height: 60px !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+	:global(.navbar-user-search) {
+		height: 60px !important;
+	}
 	nav.navbar-user { 	
 		position: fixed;
 		display: flex;
 		flex-direction: row;
 		align-items: stretch;
 		width: 100%;
-		background: material-color('grey', 'darken-3');
+		background: material-color('grey', 'darken-4');
 		z-index: 10;
-		height: 70px;
+		height: 60px;
 	}
-	nav.navbar-user > .icon {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+	nav.navbar-user > div.cover {
 		cursor: pointer;
-		border: 1px solid red;
 	}
-	nav.navbar-user > div {
-		margin: 0 32px 0 32px;
+	p.title {
+		padding: 0;
+		margin: 0;
+		text-transform: none;
 	}
 </style>

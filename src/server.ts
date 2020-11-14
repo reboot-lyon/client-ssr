@@ -23,7 +23,7 @@ polka()
 			extended: true
 		}),
 		session({
-			secret: SECRET,
+			secret: SECRET || 'abcd',
 			resave: false,
 			saveUninitialized: true,
 			cookie: {

@@ -6,13 +6,9 @@
 </script>
 
 <script>
-	import Nav from '../../components/NavAdmin.svelte';
-
-	export let segment;
 </script>
 
 <main>
-	<Nav {segment}/>
 	<content>
 		<slot></slot>
 	</content>
