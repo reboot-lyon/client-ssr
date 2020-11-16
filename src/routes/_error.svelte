@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { fly } from 'svelte/transition';
-	import { bounceOut } from 'svelte/easing';
+	import Showcase from '../components/Showcase.svelte';
 
 	const messages = [
 		"Wait what ?!",
@@ -13,12 +12,10 @@
 		"OuUups !"
 	];
 
-	let active = false;
 	let title = '';
 
 	onMount(() => {
 		title = messages[Math.floor(Math.random() * messages.length)];
-		active = true;
 	});
 </script>
 
@@ -26,12 +23,12 @@
 	<title>Reboot • Not found</title>
 </svelte:head>
 
-{#if active}
-<div class="d-flex flex-column align-center justify-center" in:fly="{{ y: -800, duration: 1200, easing: bounceOut }}">
-	<h1>{title}</h1>
-	<img src="media/reboot-undercover-error.png" alt="404 not found" />
-</div>
-{/if}
+<Showcase>
+	<div class="d-flex flex-column align-center justify-center">
+		<h1>{title}</h1>
+		<img src="media/reboot-undercover-error.png" alt="404 not found" />
+	</div>
+</Showcase>
 
 <style>
 	img {

@@ -57,7 +57,7 @@
 			email.error = false;
 			email.hint = '';
 			toggleCard();
-			const res = await postProxy('/forgot', { email: email.value });
+			const res = await postProxy('/auth/forgot', { email: email.value });
 			if (res.success) {
 				email.sent = true;
 			} else {
@@ -88,9 +88,9 @@
 </script>
 
 <div class="login">
-	<Card class="d-flex flex-row" bind:loading="{card.loading}" disabled="{card.disabled}">
+	<Card class="d-flex flex-row" style="background: none;" flat bind:loading="{card.loading}" disabled="{card.disabled}">
 		<CardTitle class="d-flex justify-center">
-			<img src="media/reboot-undercover.png" style="max-width: 300px;" alt="background" />
+			<div class="cover" on:click="{async() => await goto('/')}"/>
 		</CardTitle>
 		{#if !email.show}
 		<CardText>
@@ -104,14 +104,16 @@
 				<TextField filled type="{passwd.show ? 'text' : 'password'}" bind:value="{passwd.value}">
 					Password
 					<div slot="append" on:click="{() => { passwd.show = !passwd.show; }}">
-						<Icon path="{ passwd.show ? mdiEyeOff : mdiEye }"></Icon>
+						<Icon path="{ passwd.show ? mdiEyeOff : mdiEye }" />
 					</div>
 					<div slot="prepend">
 						<Icon path="{ mdiLock }" />
 					</div>
 				</TextField>
-				<div class="d-flex justify-center">
-					<p class="forgot-password" on:click="{toggleForgotPasswd}">Forgot password</p>
+				<div class="d-flex flex-row justify-center align-stretch">
+					<p class="ml-4 mt-4 forgot-password" on:click="{toggleForgotPasswd}">Forgot password ?</p>
+					<div style="flex-grow: 1;"/>
+					<p class="mr-4 mt-4 forgot-password" on:click="{async() => await goto('/register')}">Not register ?</p>
 				</div>
 			</div>
 		</CardText>
@@ -146,20 +148,34 @@
 </div>
 
 <style>
-
 	p.forgot-password {
 		color: cornflowerblue;
 		cursor: pointer;
 		text-decoration: underline;
 	}
 
-	.login {
+	div.login {
 		min-width: 300px;
 	}
 
+	div.cover {
+		background: center / contain no-repeat url("/media/reboot-undercover.png");
+		width: 200px;
+		height: 200px;
+		cursor: pointer;
+	}
+
 	@media (min-width: 480px) {
-		.login {
+		div.login {
 			min-width: 450px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		div.cover {
+			width: 300px;
+			height: 300px;
 		}
 	}
 </style>
