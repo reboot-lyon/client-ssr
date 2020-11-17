@@ -1,49 +1,40 @@
 <script>
-	import { fade } from 'svelte/transition';
-	import { expoOut } from 'svelte/easing';
-	import { Button, Icon } from 'svelte-materialify/src';
+	import { amber } from 'svelte-materialify/src/utils/colors';
 
-	export let activeClass="primary-color";
-	export let color = "";
-	export let icon = null;
+	export let color = '#272727';
 	export let text = null;
 	export let active = false;
-	export let style = "";
+	export let style = '';
 </script>
 
-<Button class="{color} pl-4 pr-4" style="width: 10em; height: 60px; {style}" ripple="{false}" {activeClass} depressed tile on:click>
+<button class="pl-4 pr-4" style="--theme-hover-color: {active ? amber['darken-4'] : '#383838' }; --theme-color: {active ? amber['darken-4'] : color}; {style}" on:click>
 	<div class="wrapper">
 		<div class="items">
-			{#if icon}<Icon path="{icon}" />{/if}
+			{#if text}<div class="text-button font-weight-bold text-capitalize">{text}</div>{/if}
 		</div>
-		<div class="items">
-			{#if text}<p class="text-body-2 title">{text}</p>{/if}
-		</div>
-		{#if active}<div transition:fade="{{duration: 800, easing: expoOut}}" class="border" />{/if}
 	</div>
-</Button>
+</button>
 
 <style type="text/scss">
-	@import 'svelte-materialify/src/styles/tools/colors';	
+	button {
+		width: 10eme;
+		height: 60px;
+		background: var(--theme-color);
+		transition: 200ms ease-in-out;
+	}
+
+	button:hover {
+		background: var(--theme-hover-color);
+	}
 
 	div.wrapper {
 		display: flex;
-		justify-content: space-between;
 		flex-direction: column;
 		width: 100%;
+		align-items: center;
 	}
+
 	div.items {
 		display: flex;
-		justify-content: center;
-	}
-	p.title {
-		padding: 0;
-		margin: 0;
-		text-transform: none;
-	}
-	div.border {
-		height: 2px;
-		width: 100%;
-		background: material-color('amber', 'darken-3');
 	}
 </style>

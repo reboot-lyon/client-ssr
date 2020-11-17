@@ -3,16 +3,23 @@
 	import { fly } from 'svelte/transition';
 	import { expoOut } from 'svelte/easing';
 	import { goto, stores } from '@sapper/app';
-	import { Avatar, Badge, Button, Divider, Icon, List, ListItem, Menu, Overlay, Subheader, TextField } from 'svelte-materialify/src';
-	import { mdiMagnify, mdiTrophyVariant, mdiTournament, mdiChevronDown, mdiMenu, mdiCalendar, mdiArrowCollapseLeft, mdiArrowRight, mdiClose } from '@mdi/js';
+	import { Avatar, Badge, Button, Divider, Icon, List, ListItem, Menu, Overlay, Subheader, Tabs, Tab } from 'svelte-materialify/src';
+	import { mdiTrophyVariant, mdiTournament, mdiChevronDown, mdiMenu, mdiCalendar, mdiArrowCollapseLeft, mdiArrowRight, mdiClose, mdiArrowCollapseDown, mdiHome } from '@mdi/js';
 	import { delProxy } from 'utils.js';
-	import NavButton from './NavButton.svelte';
 	import Showcase from './Showcase.svelte';
+	import NavSearch from './NavSearch.svelte';
 
 	export let segment;
 
 	const { session } = stores();
 
+	let navCur;
+	const navLinks = [
+		'/',
+		'/events',
+		'/leagues',
+		'/matchs'
+	];
 	const logout = async() => {
 		const res = await delProxy('/auth');
 		if (res.user !== undefined) {
@@ -20,8 +27,15 @@
 			await goto('/');
 		}
 	};
+	const navGo = async({ detail }) => {
+		console.log(detail);
+		await goto(navLinks[detail]);
+	};
 	let windowWidth;
 	let menuActive = false;
+
+	$: console.log(windowWidth);
+	$: navCur = segment ? (navLinks.indexOf(`/${segment}`) > -1 ? navLinks.indexOf(`/${segment}`) : 0) : 0;
 
 	onMount(() => {
 		console.log('segment', segment);
@@ -30,92 +44,137 @@
 
 <svelte:window bind:innerWidth="{windowWidth}" />
 
-
 {#if segment !== 'sign' && segment !== 'register'}
-	{#if !$session.user}
-		<Showcase>
-			<nav class="navbar-user">
-				{#if windowWidth < 560}
-					<div class="d-flex flex-row align-stretch cover-mob" on:click="{async () => {await goto('/')}}">
-						<NavButton style="width: 80px;" icon="{mdiMenu}" on:click="{async() => {menuActive = true}}" />
+	<Showcase>
+		<nav class="navbar-user">
+			{#if windowWidth < 560}
+				<div class="d-flex flex-row" style="width: 100%;">
+					<Button class="primary-color" depressed flat tile style="height: 60px;" on:click="{async() => {menuActive = true}}">
+						<Icon path="{mdiMenu}" />
+					</Button>
+					<div class="cover-mob" style="flex-grow: 1;"/>
+				</div>
+			{:else}
+				<div class="cover"/>
+				<div class="d-flex flex-row align-stretch" style="flex-grow: 1;">
+					<Tabs class="navbar-user-search primary-text" bind:value="{navCur}" showArrows="{false}" grow on:change="{navGo}">
+						<div slot="tabs">
+							<Tab>Home</Tab>
+							<Tab>Events</Tab>
+							<Tab>Leagues</Tab>
+							<Tab>Matchs</Tab>
+						</div>
+					</Tabs>
+				</div>
+				<div class="d-flex flex-row justify-end">
+					<NavSearch />
+				</div>
+				{#if !$session.user}
+					<div class="d-flex flex-row align-stretch">
+						<Button class="primary-color" style="height: 60px;" on:click="{async() => await goto('/sign')}" depressed tile>
+							Sign-in
+						</Button>
+						<Button style="height: 60px;" on:click="{() => goto('/register')}" depressed tile>
+							Register
+						</Button>
 					</div>
 				{:else}
-					<div class="cover ml-12" on:click="{async () => {await goto('/')}}" />
 					<div class="d-flex flex-row align-stretch">
-						<NavButton active="{segment === 'events' ? true : false}"icon="{mdiCalendar}" text="Events" on:click="{async() => {await goto('/events')}}" />
-						<NavButton active="{segment === 'leaderboards' ? true : false}" icon="{mdiTrophyVariant}" text="Leaderboards" on:click="{async() => {await goto('/leaderboards')}}" />
-						<NavButton active="{segment === 'tournaments' ? true : false}" icon="{mdiTournament}" text="Tournaments" on:click="{async() => {await goto('/tournaments')}}" />
+						<Menu style="background: #272727; box-shadow: none;"  transition="{fly}" inOpts="{{ y: -100, duration: 800, easing: expoOut }}" closeOnClick="{false}" tile right>
+							<div slot="activator">
+								<Button class="pl-4" style="width: 120px; height: 60px;" depressed tile>
+									<div class="d-flex flex-row justify-center align-stretch mr-1">
+										<Badge class="primary-color white-text mr-10" dot bottom offsetX="{10}" offsetY="{10}">
+											<Avatar size="{45}"><img src="//picsum.photos/50" alt="profile" /></Avatar>
+										</Badge>
+									</div>
+									<div class="d-flex flex-row justify-center align-stretch ml-1">
+										<Icon path="{mdiChevronDown}" />
+									</div>
+								</Button>
+							</div>
+							<List style="width: 200px;">
+								<ListItem>Option 1</ListItem>
+								<ListItem>Option 2</ListItem>
+								<ListItem>Option 3</ListItem>
+								<Divider />
+								<ListItem>Admin panel</ListItem>
+								<Divider />
+								<ListItem on:click="{async() => await logout()}">Logout</ListItem>
+							</List>
+						</Menu>
 					</div>
-					<div style="flex-grow:1; background: #272727;"/>
-					<div style="flex-grow:1; max-width: 400px;">
-						<div class="d-flex align-center">
-							<TextField class="navbar-user-search primary-text" flat placeholder="Search">
-								<div slot="append">
-									<Icon path="{mdiMagnify}" />
-								</div>
-							</TextField>
-						</div>
-					</div>
-					{#if !$session.user}
-						<div class="d-flex flex-row align-stretch">
-							<NavButton color="primary-color" style="width: 100px;" text="Sign-in" on:click="{async() => await goto('/sign')}" />
-							<NavButton style="width: 100px;" text="Register" on:click="{async() => await goto('/register')}" />
-						</div>
-					{:else}
-						<div class="d-flex flex-row align-stretch">
-							<Menu right transition="{fly}" inOpts="{{ y: -100, duration: 800, easing: expoOut }}" style="background: #272727; box-shadow: none;" tile top >
-								<div slot="activator">
-									<Button class="pl-4" style="width: 120px; height: 60px;" depressed tile>
-										<div class="d-flex flex-row justify-center align-stretch mr-1">
-											<Badge class="primary-color white-text mr-10" dot bottom offsetX="{10}" offsetY="{10}">
-												<Avatar size="{45}"><img src="//picsum.photos/50" alt="profile" /></Avatar>
-											</Badge>
-										</div>
-										<div class="d-flex flex-row justify-center align-stretch ml-1">
-											<Icon path="{mdiChevronDown}" />
-										</div>
-									</Button>
-								</div>
-								<List style="width: 200px;">
-									<ListItem>Option 1</ListItem>
-									<ListItem>Option 2</ListItem>
-									<ListItem>Option 3</ListItem>
-									<Divider />
-									<ListItem on:click="{logout}">Logout</ListItem>
-								</List>
-							</Menu>
-						</div>
-					{/if}
 				{/if}
-			</nav>
-		</Showcase>
-	{:else} 
-	{/if}
+			{/if}
+		</nav>
+	</Showcase>
 	{#if menuActive}
-		<Overlay class="d-flex flex-row" fadeOptions="{{duration: 300}}" opacity="{0.95}" index="{11}" active="{menuActive}">
-			<nav class="navbar-user">
-				<NavButton color="red" style="width: 80px;" icon="{mdiClose}" on:click="{async() => {menuActive = false}}" />
+		<Overlay style="align-items: stretch;"transition="{fly}" inOpts="{{y: -200, duration: 800}}" opacity="1" index="11" active="{menuActive}">
+			<nav class="navbar-user-mob">
+				<Button class="red base" depressed flat tile style="height: 60px;" on:click="{async() => {menuActive = false}}">
+					<Icon path="{mdiClose}" />
+				</Button>
+				<NavSearch style="border-radius: 2px;"/>
 			</nav>
-			<List class="d-flex flex-column justify-center align-stretch" style="width: 100vw;">
-				<Subheader>Menu</Subheader>
-				<ListItem active="{segment === 'events' ? true : false}" on:click="{async() => {menuActive = false; await goto('/events')}}">
+			<List class="d-flex flex-column justify-center align-stretch pa-0" style="width: 100vw;">
+				<Subheader class="text-body-1">Yugioh</Subheader>
+				<ListItem activeClass="primary-color" active="{segment === undefined ? true : false}" on:click="{async() => {menuActive = false; await goto('/')}}">
+					<span slot="prepend">
+						<Icon path="{mdiHome}" />
+					</span>
+					Home
+				</ListItem>
+				<ListItem activeClass="primary-color" active="{segment === 'events' ? true : false}" on:click="{async() => {menuActive = false; await goto('/events')}}">
 					<span slot="prepend">
 						<Icon path="{mdiCalendar}" />
 					</span>
 					Events
 				</ListItem>
-				<ListItem>Option 2</ListItem>
-				<ListItem>Option 3</ListItem>
+				<ListItem activeClass="primary-color" active="{segment === 'leagues' ? true : false}" on:click="{async() => {menuActive = false; await goto('/leagues')}}">
+					<span slot="prepend">
+						<Icon path="{mdiTrophyVariant}" />
+					</span>
+					Leagues
+				</ListItem>
+				<ListItem activeClass="primary-color" active="{segment === 'matchs' ? true : false}" on:click="{async() => {menuActive = false; await goto('/matchs')}}">
+					<span slot="prepend">
+						<Icon path="{mdiTournament}" />
+					</span>
+					Matchs
+				</ListItem>
 				<Divider />
-				<ListItem on:click="{logout}">Logout</ListItem>
+				<Subheader class="text-body-1">User</Subheader>
+				{#if !$session.user}
+					<ListItem activeClass="primary-color" on:click="{async() => {menuActive = false; await goto('/sign');}}">
+						<span slot="prepend">
+							<Icon path="{mdiArrowRight}" />
+						</span>
+						Sign-in
+					</ListItem>
+					<ListItem activeClass="primary-color" on:click="{async() => {menuActive = false; await goto('/register');}}">
+						<span slot="prepend">
+							<Icon path="{mdiArrowCollapseDown}" />
+						</span>
+						Register
+					</ListItem>
+				{:else}
+					<ListItem activeClass="primary-color" on:click="{async() => {menuActive = false; logout();}}">
+						<span slot="prepend">
+							<Icon path="{mdiArrowCollapseLeft}" />
+						</span>
+						Logout
+					</ListItem>
+				{/if}
 			</List>
 		</Overlay>
 	{/if}
 {:else}
 	<Showcase>
-		<nav class="navbar-user">
+		<nav class="navbar-user back-cover">
 			<div class="d-flex flex-row align-stretch">
-				<NavButton color="grey darken-4" icon="{mdiArrowCollapseLeft}" text="Back" on:click="{async() => await goto('/')}" />
+				<Button class="grey darken-4" depressed flat tile style="height: 60px;" on:click="{async() => await goto('/')}">
+					<Icon path="{mdiArrowCollapseLeft}" />
+				</Button>
 			</div>
 		</nav>
 	</Showcase>
@@ -131,38 +190,52 @@
 	}
 	:global(.navbar-user-search) {
 		height: 60px !important;
+		background: #272727;
 	}
 
 	div.cover {
 		background: center / auto 60px no-repeat url("/media/reboot-undercover-mob.png");
-		cursor: pointer;
 		height: 60px;
-		width: 220px;
+		width: 235px;
+		margin: 0 0 0 8px;
 	}
-	@media (min-width: 1050px) {
+
+	div.cover-mob {
+		width: 240px;
+		height: 60px;
+		background: center / 240px 60px no-repeat url("/media/reboot-undercover-menu.png");
+	}
+
+	@media (min-width: 1100px) {
 		div.cover {
+			margin: 0 0 0 32px;
 			background: center / contain no-repeat url("/media/reboot-undercover-menu.png");
-			cursor: pointer;
-			height: 60px;
-			width: 240px;
 		}
 	}
+
 	nav.navbar-user { 	
 		position: fixed;
 		display: flex;
 		flex-direction: row;
 		align-items: stretch;
 		width: 100%;
-		background: material-color('grey', 'darken-4');
+		background: #272727;
 		z-index: 10;
 		height: 60px;
-		top: 0;
-		left: 0;
 	}
-	div.cover-mob {
+
+	nav.navbar-user-mob {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
 		width: 100%;
-		height: 100%;
-		background: right / contain no-repeat url("/media/reboot-undercover-menu.png");
-		cursor: pointer;
+		background: #272727;
+		z-index: 10;
+		height: 60px;
+	}
+
+	nav.back-cover {
+		background: #212121;
 	}
 </style>
