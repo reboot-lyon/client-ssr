@@ -14,10 +14,8 @@
 	<title>Reboot • Sign-in</title>
 </svelte:head>
 
-<div class="d-flex justify-center" style="height: 100vh">
-	<div class="align-self-center">
-		<Showcase>
-			<Login />
-		</Showcase>
-	</div>
+<div class="d-flex justify-center align-self-center">
+	<Showcase>
+		<Login />
+	</Showcase>
 </div>

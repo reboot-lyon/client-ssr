@@ -28,7 +28,6 @@
 		}
 	};
 	const navGo = async({ detail }) => {
-		console.log(detail);
 		await goto(navLinks[detail]);
 	};
 	let windowWidth;
@@ -47,7 +46,7 @@
 {#if segment !== 'sign' && segment !== 'register'}
 	<Showcase>
 		<nav class="navbar-user">
-			{#if windowWidth < 560}
+			{#if windowWidth < 820}
 				<div class="d-flex flex-row" style="width: 100%;">
 					<Button class="primary-color" depressed flat tile style="height: 60px;" on:click="{async() => {menuActive = true}}">
 						<Icon path="{mdiMenu}" />
@@ -109,7 +108,7 @@
 		</nav>
 	</Showcase>
 	{#if menuActive}
-		<Overlay style="align-items: stretch;"transition="{fly}" inOpts="{{y: -200, duration: 800}}" opacity="1" index="11" active="{menuActive}">
+		<Overlay style="align-items: stretch;"transition="{fly}" inOpts="{{y: -200, duration: 800}}" outOpts="{{y: -200, duration: 800}}" opacity="1" index="11" active="{menuActive}">
 			<nav class="navbar-user-mob">
 				<Button class="red base" depressed flat tile style="height: 60px;" on:click="{async() => {menuActive = false}}">
 					<Icon path="{mdiClose}" />
@@ -175,6 +174,7 @@
 				<Button class="grey darken-4" depressed flat tile style="height: 60px;" on:click="{async() => await goto('/')}">
 					<Icon path="{mdiArrowCollapseLeft}" />
 				</Button>
+				<div class="cover-mob" style="flex-grow: 1;"/>
 			</div>
 		</nav>
 	</Showcase>
@@ -206,7 +206,7 @@
 		background: center / 240px 60px no-repeat url("/media/reboot-undercover-menu.png");
 	}
 
-	@media (min-width: 1100px) {
+	@media (min-width: 1150px) {
 		div.cover {
 			margin: 0 0 0 32px;
 			background: center / contain no-repeat url("/media/reboot-undercover-menu.png");

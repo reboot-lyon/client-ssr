@@ -15,9 +15,6 @@ const fileStore = sessionFileStore(session);
 
 polka()
 	.use(
-		helmet({
-			contentSecurityPolicy: false
-		}),
 		bodyParser.json(),
 		bodyParser.urlencoded({
 			extended: true
@@ -43,6 +40,6 @@ polka()
 			})
 		})
 	)
-	.listen(PORT, () => {
+	.listen(PORT, '192.168.1.33', () => {
 		console.log(`:: ${PORT}`);
 	});

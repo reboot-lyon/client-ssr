@@ -7,7 +7,7 @@
 
 <MaterialApp theme="dark">
 	<Nav segment="{segment}" />
-	<main class="d-flex align-center justify-center">
+	<main>
 		<content>
 			<slot />
 		</content>
@@ -17,13 +17,14 @@
 <style>
 	content {
 		display: block;
-		position: relative;
-		max-width: 56em;
+		width: 100%;
+		padding: 1em;
 		margin: 0 auto;
 		box-sizing: border-box;
 	}
 	main {
 		display: flex;
+		padding: 60px 0 0 0;
 		height: 100vh;
 	}
 </style>

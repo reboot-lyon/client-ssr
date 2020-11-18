@@ -85,7 +85,7 @@
 	}
 </script>
 
-<div class="login">
+<div class="login-form">
 	<Card class="d-flex flex-row" style="background: none;" flat bind:loading="{card.loading}" disabled="{card.disabled}">
 		<CardTitle class="d-flex justify-center">
 			<div class="cover"/>
@@ -93,13 +93,13 @@
 		{#if !email.show}
 			<CardText>
 				<div in:fly="{{ y: -200, duration: 800, esaing: expoInOut }}">
-					<TextField filled clearable bind:error="{email.error}" bind:hint="{email.hint}" validateOnBlur="{true}" bind:value="{email.value}">
+					<TextField class="pt-8" filled type="email"autocomplete="email" clearable bind:error="{email.error}" bind:hint="{email.hint}" validateOnBlur="{true}" bind:value="{email.value}">
 						Email
 						<div slot="prepend">
 							<Icon path="{ mdiEmail }" />
 						</div>
 					</TextField>
-					<TextField filled type="{passwd.show ? 'text' : 'password'}" bind:value="{passwd.value}" on:keypress="{(e) => sendAuth(e)}">
+					<TextField class="pt-4" filled type="{passwd.show ? 'text' : 'password'}" bind:value="{passwd.value}" on:keypress="{(e) => sendAuth(e)}">
 						Password
 						<div slot="append" on:click="{() => { passwd.show = !passwd.show; }}">
 							<Icon path="{ passwd.show ? mdiEyeOff : mdiEye }" />
@@ -118,7 +118,7 @@
 		{:else}
 			<CardText>
 				<div in:fly="{{ y: -200, duration: 800, esaing: expoInOut }}">
-					<TextField filled clearable bind:error="{email.error}" bind:hint="{email.hint}" bind:value="{email.value}" on:keypress="{(e) => sendForgotMail(e)}">
+					<TextField class="pt-8" filled clearable type="email" autocomplete="email" bind:error="{email.error}" bind:hint="{email.hint}" bind:value="{email.value}" on:keypress="{(e) => sendForgotMail(e)}">
 						Email
 						<div slot="prepend">
 							<Icon path="{ mdiEmail }" />
@@ -140,7 +140,7 @@
 		text-decoration: underline;
 	}
 
-	div.login {
+	div.login-form {
 		min-width: 300px;
 	}
 
@@ -151,7 +151,7 @@
 	}
 
 	@media (min-width: 480px) {
-		div.login {
+		div.login-form {
 			min-width: 450px;
 			display: flex;
 			flex-direction: column;

@@ -38,5 +38,6 @@
 		width: calc(100% - 25px);
 		padding: 0 5px 0 5px;
 		transition: 200ms ease-in-out;
+		outline: none;
 	}
 </style>
