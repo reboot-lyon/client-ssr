@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import Showcase from '../components/Showcase.svelte';
+	import Transitor from '../components/Transitor.svelte';
 
 	const messages = [
 		"Wait what ?!",
@@ -23,12 +23,12 @@
 	<title>Reboot • Not found</title>
 </svelte:head>
 
-<Showcase>
+<Transitor>
 	<div class="d-flex flex-column align-center justify-center">
 		<h1>{title}</h1>
 		<img src="media/reboot-undercover-error.png" alt="404 not found" />
 	</div>
-</Showcase>
+</Transitor>
 
 <style>
 	img {

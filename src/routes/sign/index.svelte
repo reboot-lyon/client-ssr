@@ -6,8 +6,8 @@
 </script>
 
 <script>
-	import Login from '../../components/Login.svelte';
-	import Showcase from '../../components/Showcase.svelte';
+	import FormLogin from '../../components/FormLogin.svelte';
+	import Transitor from '../../components/Transitor.svelte';
 </script>
 
 <svelte:head>
@@ -15,7 +15,7 @@
 </svelte:head>
 
 <div class="d-flex justify-center align-self-center">
-	<Showcase>
-		<Login />
-	</Showcase>
+	<Transitor>
+		<FormLogin />
+	</Transitor>
 </div>

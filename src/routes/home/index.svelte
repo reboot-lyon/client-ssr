@@ -6,21 +6,21 @@
 </script>
 
 <script>
-	import Showcase from '../../components/Showcase.svelte';
+	import Transitor from '../../components/Transitor.svelte';
 </script>
 
 <svelte:head>
 	<title>Reboot • Home</title>
 </svelte:head>
 
-<Showcase>
+<Transitor>
 	<h1>Great success!</h1>
 	<figure>
 		<img alt='Success Kid' src='favicon.png'>
 		<figcaption>Have fun with Sapper!</figcaption>
 	</figure>
 	<p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>
-</Showcase>
+</Transitor>
 
 <style>
 	h1, figure, p {

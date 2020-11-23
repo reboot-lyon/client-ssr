@@ -3,7 +3,7 @@
 	import { expoInOut } from 'svelte/easing';
 	import { goto, stores } from '@sapper/app';
 	import { Card, CardTitle, CardText, Icon, TextField } from 'svelte-materialify/src';
-	import { mdiEmail, mdiEye, mdiEyeOff, mdiLock, mdiLoginVariant } from '@mdi/js';
+	import { mdiEmail, mdiEye, mdiEyeOff, mdiLock } from '@mdi/js';
 	import { postProxy } from 'utils';
 
 	const { session } = stores();
@@ -31,9 +31,9 @@
 		if (e.key === 'Enter') {
 			if (pattern.test(email.value) && passwd.value !== '') {
 				toggleCard();
-				const res = await postProxy('/auth', { email: email.value, passwd: passwd.value });
-				if (res.user) {
-					$session.user = res.user;
+				const res = await postProxy('/auth/sign', { email: email.value, passwd: passwd.value });
+				if (res.success) {
+					$session.user = res.token;
 					await goto('/home');
 				} else {
 					passwd.value = '';
@@ -54,7 +54,7 @@
 				email.error = false;
 				email.hint = '';
 				toggleCard();
-				const res = await postProxy('/auth/forgot', { email: email.value });
+				const res = await postProxy('/auth/sign/forgot', { email: email.value });
 				if (res.success) {
 					email.sent = true;
 				} else {

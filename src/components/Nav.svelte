@@ -2,16 +2,15 @@
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { expoOut } from 'svelte/easing';
-	import { goto, stores } from '@sapper/app';
+	import { goto } from '@sapper/app';
 	import { Avatar, Badge, Button, Divider, Icon, List, ListItem, Menu, Overlay, Subheader, Tabs, Tab } from 'svelte-materialify/src';
 	import { mdiTrophyVariant, mdiTournament, mdiChevronDown, mdiMenu, mdiCalendar, mdiArrowCollapseLeft, mdiArrowRight, mdiClose, mdiArrowCollapseDown, mdiHome } from '@mdi/js';
 	import { delProxy } from 'utils.js';
-	import Showcase from './Showcase.svelte';
-	import NavSearch from './NavSearch.svelte';
+	import Transitor from './Transitor.svelte';
+	import SearchBar from './SearchBar.svelte';
 
 	export let segment;
-
-	const { session } = stores();
+	export let user;
 
 	let navCur;
 	const navLinks = [
@@ -21,9 +20,9 @@
 		'/matchs'
 	];
 	const logout = async() => {
-		const res = await delProxy('/auth');
-		if (res.user !== undefined) {
-			$session.user = res.user;
+		const res = await delProxy('/auth/sign');
+		if (res.success) {
+			user = res.user;
 			await goto('/');
 		}
 	};
@@ -33,7 +32,7 @@
 	let windowWidth;
 	let menuActive = false;
 
-	$: console.log(windowWidth);
+	$: windowWidth ? console.log(windowWidth) : null;
 	$: navCur = segment ? (navLinks.indexOf(`/${segment}`) > -1 ? navLinks.indexOf(`/${segment}`) : 0) : 0;
 
 	onMount(() => {
@@ -44,7 +43,8 @@
 <svelte:window bind:innerWidth="{windowWidth}" />
 
 {#if segment !== 'sign' && segment !== 'register'}
-	<Showcase>
+	<Transitor inOpts="{{ x: -200, duration: 300 }}">
+		<Button on:click="{() => user = !user}">test</Button>
 		<nav class="navbar-user">
 			{#if windowWidth < 820}
 				<div class="d-flex flex-row" style="width: 100%;">
@@ -66,19 +66,17 @@
 					</Tabs>
 				</div>
 				<div class="d-flex flex-row justify-end">
-					<NavSearch />
+					<SearchBar />
 				</div>
-				{#if !$session.user}
-					<div class="d-flex flex-row align-stretch">
+				<div class="d-flex flex-row align-stretch">
+					{#if !user}
 						<Button class="primary-color" style="height: 60px;" on:click="{async() => await goto('/sign')}" depressed tile>
 							Sign-in
 						</Button>
-						<Button style="height: 60px;" on:click="{() => goto('/register')}" depressed tile>
+						<Button style="height: 60px;" on:click="{async() => await goto('/register')}" depressed tile>
 							Register
 						</Button>
-					</div>
-				{:else}
-					<div class="d-flex flex-row align-stretch">
+					{:else}
 						<Menu style="background: #272727; box-shadow: none;"  transition="{fly}" inOpts="{{ y: -100, duration: 800, easing: expoOut }}" closeOnClick="{false}" tile right>
 							<div slot="activator">
 								<Button class="pl-4" style="width: 120px; height: 60px;" depressed tile>
@@ -102,18 +100,18 @@
 								<ListItem on:click="{async() => await logout()}">Logout</ListItem>
 							</List>
 						</Menu>
-					</div>
-				{/if}
+					{/if}
+				</div>
 			{/if}
 		</nav>
-	</Showcase>
+	</Transitor>
 	{#if menuActive}
 		<Overlay style="align-items: stretch;"transition="{fly}" inOpts="{{y: -200, duration: 800}}" outOpts="{{y: -200, duration: 800}}" opacity="1" index="11" active="{menuActive}">
 			<nav class="navbar-user-mob">
 				<Button class="red base" depressed flat tile style="height: 60px;" on:click="{async() => {menuActive = false}}">
 					<Icon path="{mdiClose}" />
 				</Button>
-				<NavSearch style="border-radius: 2px;"/>
+				<SearchBar style="border-radius: 2px;"/>
 			</nav>
 			<List class="d-flex flex-column justify-center align-stretch pa-0" style="width: 100vw;">
 				<Subheader class="text-body-1">Yugioh</Subheader>
@@ -143,7 +141,7 @@
 				</ListItem>
 				<Divider />
 				<Subheader class="text-body-1">User</Subheader>
-				{#if !$session.user}
+				{#if !user}
 					<ListItem activeClass="primary-color" on:click="{async() => {menuActive = false; await goto('/sign');}}">
 						<span slot="prepend">
 							<Icon path="{mdiArrowRight}" />
@@ -168,7 +166,7 @@
 		</Overlay>
 	{/if}
 {:else}
-	<Showcase>
+	<Transitor>
 		<nav class="navbar-user back-cover">
 			<div class="d-flex flex-row align-stretch">
 				<Button class="grey darken-4" depressed flat tile style="height: 60px;" on:click="{async() => await goto('/')}">
@@ -177,12 +175,10 @@
 				<div class="cover-mob" style="flex-grow: 1;"/>
 			</div>
 		</nav>
-	</Showcase>
+	</Transitor>
 {/if}
 
 <style type="text/scss">
-	@import 'svelte-materialify/src/styles/tools/colors';
-
 	:global(.navbar-user-tab) {
 		height: 60px !important;
 		margin: 0 !important;

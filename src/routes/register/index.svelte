@@ -6,19 +6,17 @@
 </script>
 
 <script>
-	import Register from '../../components/Register.svelte';
-	import Showcase from '../../components/Showcase.svelte';
+	import FormRegister from '../../components/FormRegister.svelte';
+	import Transitor from '../../components/Transitor.svelte';
 </script>
 
 <svelte:head>
 	<title>Reboot • Register</title>
 </svelte:head>
 
-<div class="d-flex justify-center align-self-center">
-	<Showcase>
-		<Register />
-	</Showcase>
-</div>
+<Transitor>
+	<FormRegister />
+</Transitor>
 
 <style>
 </style>

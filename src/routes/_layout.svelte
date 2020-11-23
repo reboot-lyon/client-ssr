@@ -1,30 +1,24 @@
 <script>
+	import { stores } from '@sapper/app';
 	import MaterialApp from 'svelte-materialify/src/components/MaterialApp/MaterialApp.svelte';
 	import Nav from '../components/Nav.svelte';
 
 	export let segment;
+
+	const { session } = stores();
 </script>
 
 <MaterialApp theme="dark">
-	<Nav segment="{segment}" />
+	<Nav bind:segment bind:user="{$session.user}" />
 	<main>
-		<content>
-			<slot />
-		</content>
+		<slot />
 	</main>
 </MaterialApp>
 
 <style>
-	content {
-		display: block;
-		width: 100%;
-		padding: 1em;
-		margin: 0 auto;
-		box-sizing: border-box;
-	}
+
 	main {
-		display: flex;
-		padding: 60px 0 0 0;
-		height: 100vh;
+		padding: 76px 0 0 0;
+		min-height: 100vh;
 	}
 </style>

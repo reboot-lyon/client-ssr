@@ -1,10 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
-	import { expoOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 
 	export let transition = fly;
-	export let opts = { y: -400, duration: 800, easing: expoOut };
+	export let inOpts = { x: 200, duration: 300 };
 	let active = false;
 
 	onMount(() => {
@@ -13,7 +12,10 @@
 </script>
 
 {#if active}
-<div in:transition="{opts}">
-	<slot />
-</div>
+	<div in:transition="{inOpts}">
+		<slot />
+	</div>
 {/if}
+
+<style>
+</style>
