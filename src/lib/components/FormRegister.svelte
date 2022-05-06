@@ -156,20 +156,19 @@
 
 	const nextItem = async () => {
 		switch (currentWindow) {
-			case 0:
+			case 0: {
 				if (windows[0].errors.konamiid) {
 					error = "Invalid Konami ID";
 					return;
 				}
-
 				const res = await sendCheckID();
 				if (!res.ok) {
 					error = res.statusText;
 					return;
 				}
 				break;
-
-			case 1:
+			}
+			case 1: {
 				const values = windows[1].values;
 				const errors = windows[1].errors;
 				for (let key in values) {
@@ -179,8 +178,8 @@
 					}
 				}
 				break;
-
-			case 2:
+			}
+			case 2: {
 				const emailCheck = await sendCheckEmail();
 				if (!emailCheck) {
 					error = "Email already exist";
@@ -189,7 +188,7 @@
 					sendForm();
 				}
 				break;
-
+			}
 			default:
 				break;
 		}
@@ -393,7 +392,7 @@
 				depressed
 				flat
 				tile
-				on:click="{(e) => nextItem()}"
+				on:click="{() => nextItem()}"
 				disabled="{currentWindow === windows.length - 1}"
 			>
 				<Icon path="{mdiArrowRight}" />

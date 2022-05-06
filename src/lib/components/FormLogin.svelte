@@ -3,7 +3,6 @@
 	import { expoInOut } from "svelte/easing";
 
 	import { goto } from "$app/navigation";
-	import { session } from "$app/stores";
 
 	import Card from "svelte-materialify/src/components/Card/Card.svelte";
 	import CardTitle from "svelte-materialify/src/components/Card/CardTitle.svelte";

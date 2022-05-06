@@ -22,7 +22,7 @@ export const post: RequestHandler = async ({ request, locals }) => {
 	};
 };
 
-export const del: RequestHandler = async ({ request, locals }) => {
+export const del: RequestHandler = async ({ locals }) => {
 	const sessionid = locals.sessionid;
 
 	const res = await api("DELETE", "tokens", undefined, {
