@@ -157,7 +157,6 @@
 	const nextItem = async () => {
 		switch (currentWindow) {
 			case 0:
-				console.log(windows[0].errors.konamiid);
 				if (windows[0].errors.konamiid) {
 					error = "Invalid Konami ID";
 					return;
