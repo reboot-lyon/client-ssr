@@ -1,9 +1,10 @@
-<script>
-	import { onMount } from 'svelte';
-	import { fly } from 'svelte/transition';
+<script lang="ts">
+	import { onMount } from "svelte";
+	import { fly } from "svelte/transition";
 
 	export let transition = fly;
-	export let inOpts = { x: 200, duration: 300 };
+	export let inOpts: Record<string, unknown> = { y: -200, duration: 300 };
+
 	let active = false;
 
 	onMount(() => {
