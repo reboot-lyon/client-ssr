@@ -1,12 +1,12 @@
 <script context="module">
 	export async function preload(page, session) {
 		let { user } = session;
-		if (!user) return (this.redirect(302, '/'));
+		if (!user) return this.redirect(302, "/");
 	}
 </script>
 
 <script>
-	import Transitor from '../../components/Transitor.svelte';
+	import Transitor from "$components/Transitor.svelte";
 </script>
 
 <svelte:head>
@@ -16,14 +16,16 @@
 <Transitor>
 	<h1>Great success!</h1>
 	<figure>
-		<img alt='Success Kid' src='favicon.png'>
+		<img alt="Success Kid" src="favicon.png" />
 		<figcaption>Have fun with Sapper!</figcaption>
 	</figure>
 	<p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>
 </Transitor>
 
 <style>
-	h1, figure, p {
+	h1,
+	figure,
+	p {
 		text-align: center;
 		margin: 0 auto;
 	}
