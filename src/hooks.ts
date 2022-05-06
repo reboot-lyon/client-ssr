@@ -1,0 +1,36 @@
+import cookie from "cookie";
+import { v4 as uuid } from "@lukeed/uuid";
+import type { Handle, GetSession } from "@sveltejs/kit";
+
+const production = import.meta.env.PROD;
+
+export const handle: Handle = async ({ event, resolve }) => {
+	const cookies = cookie.parse(event.request.headers.get("cookie") || "");
+	event.locals.userid = cookies["userid"] || uuid();
+
+	const response = await resolve(event);
+
+	if (!cookies.userid) {
+		// if this is the first time the user has visited this app,
+		// set a cookie so that we recognise them when they return
+		response.headers.set(
+			"set-cookie",
+			cookie.serialize("userid", event.locals.userid, {
+				maxAge: 60 * 60 * 24,
+				httpOnly: true,
+				path: "/",
+				secure: production,
+				sameSite: "lax"
+			})
+		);
+	}
+
+	return response;
+};
+
+export const getSession: GetSession = ({ locals }) => {
+	return {
+		jwt: locals.sessionid
+		//jwt: "abcdef"
+	};
+};
