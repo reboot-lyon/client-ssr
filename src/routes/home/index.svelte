@@ -1,11 +1,20 @@
-<script context="module">
-	export async function preload(page, session) {
-		let { user } = session;
-		if (!user) return this.redirect(302, "/");
-	}
+<script lang="ts" context="module">
+	import type { Load } from "@sveltejs/kit";
+
+	export const load: Load = async ({ session }) => {
+		const { jwt } = session;
+
+		if (jwt)
+			return {
+				status: 301,
+				redirect: "/"
+			};
+
+		return {};
+	};
 </script>
 
-<script>
+<script lang="ts">
 	import Transitor from "$components/Transitor.svelte";
 </script>
 

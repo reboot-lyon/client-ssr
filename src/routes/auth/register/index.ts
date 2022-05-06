@@ -28,9 +28,9 @@ export const post: RequestHandler = async (req: Request<Locals>) => {
 };
 */
 
-import { api } from "../_api";
+//import { api } from "../_api";
 
-export const get: RequestHandler = async ({ request, locals, url }) => {
+export const get: RequestHandler = async ({ url }) => {
 	const konamiid = url.searchParams.get("konamiid");
 	const email = url.searchParams.get("email");
 
@@ -41,7 +41,7 @@ export const get: RequestHandler = async ({ request, locals, url }) => {
 
 	if (!email && !konamiid) return {};
 
-	const res = await api("GET", path);
+	//const res = await api("GET", path);
 
 	return {};
 };

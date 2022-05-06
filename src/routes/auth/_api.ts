@@ -7,7 +7,7 @@ export function api(
 	resource: string,
 	data?: Record<string, unknown>,
 	headers?: Record<string, unknown>
-) {
+): Promise<Response> {
 	return fetch(`${base}/${resource}`, {
 		method,
 		headers: {
